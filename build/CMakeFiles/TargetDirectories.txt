@@ -1,0 +1,8 @@
+/home/bald/embedded/stm32f103-freertos/build/CMakeFiles/edit_cache.dir
+/home/bald/embedded/stm32f103-freertos/build/CMakeFiles/rebuild_cache.dir
+/home/bald/embedded/stm32f103-freertos/build/external/CMakeFiles/freertos.dir
+/home/bald/embedded/stm32f103-freertos/build/external/CMakeFiles/edit_cache.dir
+/home/bald/embedded/stm32f103-freertos/build/external/CMakeFiles/rebuild_cache.dir
+/home/bald/embedded/stm32f103-freertos/build/startup/CMakeFiles/startup.dir
+/home/bald/embedded/stm32f103-freertos/build/startup/CMakeFiles/edit_cache.dir
+/home/bald/embedded/stm32f103-freertos/build/startup/CMakeFiles/rebuild_cache.dir
