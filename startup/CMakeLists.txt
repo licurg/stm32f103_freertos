@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(startup ASM)
+project(startup_stm32f103xb ASM)
 
 add_definitions(-DHSE_VALUE=8000000U)
 add_definitions(-DUSE_HAL_DRIVER)

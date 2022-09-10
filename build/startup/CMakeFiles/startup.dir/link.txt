@@ -1,2 +1,0 @@
-/home/bald/embedded/toolchain/gcc-arm-11.2-2022.02-x86_64-arm-none-eabi/bin/arm-none-eabi-ar cr libstartup.a CMakeFiles/startup.dir/startup_stm32f10x_hd.s.o 
-/home/bald/embedded/toolchain/gcc-arm-11.2-2022.02-x86_64-arm-none-eabi/bin/arm-none-eabi-ranlib libstartup.a
