@@ -1,17 +1,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-/* Includes -----------------------------------------------------------------*/
-
-/* Private define -----------------------------------------------------------*/
-
-/* ######################### Assert Selection ############################## */
-
-/*
- * @brief Uncomment the line below to expanse the "assert_param" macro in the
- *        HAL drivers code
- */
-/* #define USE_FULL_ASSERT    1U */
+#include "stm32f1xx_hal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,4 +13,7 @@ void _Error_Handler(char *, int);
 }
 #endif
 
-#endif
+void indication_task(void *arg);
+void init_task(void *arg);
+
+#endif /* __MAIN_H */

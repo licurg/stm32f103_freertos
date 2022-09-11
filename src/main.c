@@ -1,29 +1,94 @@
-/* Includes -----------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_hal.h"
+#include "user_tasks.h"
 
-/* Macros -------------------------------------------------------------------*/
 #define CALMDOWN_COMPILER
 
-/* Private variables --------------------------------------------------------*/
+TaskHandle_t init_handle = NULL;
+TaskHandle_t indication_handle = NULL;
+EventGroupHandle_t task_started = NULL;
 
-/* Private function prototypes ----------------------------------------------*/
 static void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
+
+void indication_task(void *arg)
+{
+	xEventGroupSetBits(task_started, INDICATION_TASK_BIT);
+
+	for (;;)
+	{
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		vTaskDelay(100);
+	}
+}
+
+void init_task(void *arg)
+{
+	task_started = xEventGroupCreate();
+    configASSERT(task_started);
+    xEventGroupSetBits(task_started, INIT_TASK_BIT);
+
+	const BaseType_t status = xTaskCreate(
+        indication_task,
+        "indication",
+        INDICATION_TASK_STACK_SIZE,
+        NULL,
+        INDICATION_TASK_PRIO,
+        &indication_handle);
+    configASSERT(status);
+
+	xEventGroupWaitBits(
+		task_started,
+    	(INIT_TASK_BIT | INDICATION_TASK_BIT),
+        pdFALSE,
+        pdTRUE,
+        portMAX_DELAY);
+
+	for (;;)
+	{
+		vTaskDelay(1);
+	}
+}
 
 int main(void)
 {
-/* MCU Configuration---------------------------------------------------------*/
+    HAL_Init();
 
-	HAL_Init();
-	SystemClock_Config();
-	MX_GPIO_Init();
+	GPIO_InitTypeDef GPIO_InitStruct;
 
-/* Infinite loop-------------------------------------------------------------*/
-	while (1) {
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-		HAL_Delay(1000);
-	}
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+
+	/*Configure GPIO pin : PC13 */
+	GPIO_InitStruct.Pin = GPIO_PIN_13;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /* Configure the system clock */
+    SystemClock_Config();
+
+    const BaseType_t status = xTaskCreate(
+                    init_task,
+                    "init",
+                    INIT_TASK_STACK_SIZE,
+                    NULL,
+                    INIT_TASK_PRIO,
+                    &init_handle);
+
+    configASSERT(status);
+
+    vTaskStartScheduler();
+
+	for (;;) { ; }
+}
+
+uint32_t HAL_GetTick(void)
+{
+    return xTaskGetTickCount();
 }
 
 static void SystemClock_Config(void)
@@ -60,24 +125,6 @@ static void SystemClock_Config(void)
 	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-static void MX_GPIO_Init(void)
-{
-	GPIO_InitTypeDef GPIO_InitStruct;
-
-	/* GPIO Ports Clock Enable */
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-
-	/*Configure GPIO pin : PC13 */
-	GPIO_InitStruct.Pin = GPIO_PIN_13;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-}
-
 /*
  * @brief  This function is executed in case of error occurrence.
  * @param  None
@@ -89,23 +136,3 @@ void _Error_Handler(char *file, int line)
 	while (1)
 		CALMDOWN_COMPILER;
 }
-
-#ifdef USE_FULL_ASSERT
-
-/*
- * @brief Reports the name of the source file and the source line number
- * where the assert_param error has occurred.
- * @param file: pointer to the source file name
- * @param line: assert_param error line source number
- * @retval None
- */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-/*
- * User can add his own implementation to report the file name and line
- * number, ex: printf("Wrong parameters value: file %s on line
- * %d\r\n", file, line)
- */
-}
-
-#endif

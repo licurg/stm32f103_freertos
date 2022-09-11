@@ -107,10 +107,10 @@ set(SOURCES
     "stm32f1xx_hal_usart.c"
     "stm32f1xx_hal_wwdg.c")
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${INCLUDES_PATH})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMSIS_INCLUDES_PATH})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMSIS_DEVICE_INCLUDES_PATH})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${HAL_INCLUDES_PATH})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${HAL_LEGACY_INCLUDES_PATH})
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDES_PATH}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/${CMSIS_INCLUDES_PATH}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/${CMSIS_DEVICE_INCLUDES_PATH}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/${HAL_INCLUDES_PATH}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/${HAL_LEGACY_INCLUDES_PATH}")
 
 add_library(${PROJECT_NAME} ${INCLUDES} ${SOURCES})
